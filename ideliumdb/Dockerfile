@@ -1,4 +1,4 @@
-FROM mariadb:10.6.22@sha256:7589b386fa6686a5d5f131b504ed21c81e492c48b78c6c4be0d5be1066542559
+FROM mariadb:12.3.3@sha256:dd9b303aed4f4890ed09f766d8ca9ddfd176c0c6f6267feff53b3192ec65a979
 
 ARG STACK_SOURCE_REVISION=unknown
 LABEL org.opencontainers.image.source="https://github.com/idelium/idelium-docker" \
