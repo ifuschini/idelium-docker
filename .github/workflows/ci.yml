@@ -8,6 +8,26 @@ permissions:
   contents: read
 
 jobs:
+  api-go-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out pinned Go API revision
+        uses: actions/checkout@v7
+        with:
+          repository: ifuschini/idelium-api-go
+          ref: 68d22b2
+          path: idelium-api-go
+      - name: Verify Go API contracts and tests
+        working-directory: idelium-api-go
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src \
+            golang:1.26.6-bookworm@sha256:433f9dc4f8ea3a1ce4e28f9f15d0f7c056b10475307f886d6f1ac1ccc4abd976 \
+            sh -c 'gofmt -d . && go test ./internal/app ./internal/browserauth ./internal/cliapi'
+      - name: Validate sanitized Go fixtures
+        working-directory: idelium-api-go
+        run: python3 scripts/validate_golden_fixtures.py testdata/golden/laravel-parallel-runs
+
   validate:
     runs-on: ubuntu-24.04
     steps:
