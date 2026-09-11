@@ -12,6 +12,7 @@ services:
     volumes:
       - ../idelium-api-go/smoke/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
       - ../idelium-api-go/smoke/seed.sql:/docker-entrypoint-initdb.d/002-seed.sql:ro
+      - ./idelium-go-demo/seed.sql:/docker-entrypoint-initdb.d/003-demo-admin.sql:ro
       - idelium_go_demo_data:/var/lib/mysql
     networks: [idelium_go_demo]
     healthcheck:
