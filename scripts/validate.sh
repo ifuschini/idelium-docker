@@ -9,6 +9,11 @@ docker compose --env-file .env.example -f docker-compose.yml -f compose.demo.yml
 docker compose --env-file .env.example -f docker-compose.yml -f compose.demo.yml -f compose.selenium.yml config --quiet
 docker compose --env-file .env.example -f docker-compose.yml -f compose.demo.yml -f compose.selenium-cross-browser.yml config --quiet
 docker compose --env-file .env.example -f docker-compose.yml -f compose.demo.yml -f compose.selenium.yml -f compose.runner.yml config --quiet
+GO_API_IMAGE=idelium/api-go@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+WEB_IMAGE=idelium/web@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb \
+GO_API_DB_PASSWORD=compose-validation-db-password \
+DB_ROOT_PASSWORD=compose-validation-root-password \
+  docker compose -f compose.go-cutover.yml config --quiet
 
 if awk '/^FROM / && $2 !~ /@sha256:/ { print FILENAME ":" FNR ": unpinned base image"; failed=1 } END { exit failed }' \
   idelium-fe/Dockerfile ideliumapi/Dockerfile ideliumdb/Dockerfile idelium-cli/Dockerfile; then

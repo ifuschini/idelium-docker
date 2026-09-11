@@ -1,0 +1,59 @@
+# Opt-in Go API cutover profile. Laravel remains available through the normal
+# docker-compose.yml stack and is the documented rollback target.
+services:
+  ideliumdb:
+    image: mariadb:10.6.22@sha256:7589b386fa6686a5d5f131b504ed21c81e492c48b78c6c4be0d5be1066542559
+    environment:
+      MARIADB_DATABASE: ${DB_DATABASE:-ideliumdb}
+      MARIADB_USER: ${DB_USERNAME:-idelium}
+      MARIADB_PASSWORD: ${GO_API_DB_PASSWORD:?Set GO_API_DB_PASSWORD for the Go cutover profile}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD for the Go cutover profile}
+    volumes:
+      - ideliumdb_data:/var/lib/mysql
+    networks: [idelium_net]
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping --silent --host=127.0.0.1 --user=root --password=$$MARIADB_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+  ideliumapigo:
+    image: ${GO_API_IMAGE:?Set GO_API_IMAGE to an immutable idelium/api-go digest}
+    environment:
+      IDELIUM_ENVIRONMENT: ${IDELIUM_ENVIRONMENT:-staging}
+      IDELIUM_HTTP_ADDRESS: ":8080"
+      IDELIUM_DB_HOST: ideliumdb
+      IDELIUM_DB_PORT: "3306"
+      IDELIUM_DB_NAME: ${DB_DATABASE:-ideliumdb}
+      IDELIUM_DB_USER: ${DB_USERNAME:-idelium}
+      IDELIUM_DB_PASSWORD: ${GO_API_DB_PASSWORD:?Set GO_API_DB_PASSWORD for the Go cutover profile}
+      IDELIUM_DB_TLS_MODE: "false"
+    depends_on:
+      ideliumdb:
+        condition: service_healthy
+    networks: [idelium_net]
+    healthcheck:
+      test: ["CMD", "/idelium-api-go", "healthcheck"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  ideliumfe:
+    image: ${WEB_IMAGE:?Set WEB_IMAGE to an immutable idelium/web digest}
+    ports:
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - idelium_tls:/usr/local/apache2/certs
+      - ./idelium-fe/conf/httpd-vhosts-idelium-go-ssl.conf:/usr/local/apache2/conf/extra/httpd-vhosts-idelium-ssl.conf:ro
+    depends_on:
+      ideliumapigo:
+        condition: service_healthy
+    networks: [idelium_net]
+
+networks:
+  idelium_net:
+    name: idelium-go-cutover
+
+volumes:
+  ideliumdb_data:
+  idelium_tls:
