@@ -96,7 +96,6 @@ git clone https://github.com/idelium/idelium-api.git
 git clone https://github.com/idelium/idelium-web.git
 git clone https://github.com/idelium/idelium-docker.git
 cd idelium-docker
-cp .env.example .env
 ./start-idelium.sh --demo
 ```
 
@@ -110,7 +109,8 @@ The wrapper verifies the required sibling repositories, creates `.env` from
 `.env.example` when needed, configures the local demo administrator as
 `admin@idelium.org` / `admin`, starts demo mode, and prints the local URL.
 
-Demo startup:
+Demo startup automatically creates `.env` from `.env.example` when it is
+missing, then:
 
 1. creates missing random development secrets under the ignored `secrets/`
    directory with restrictive permissions;

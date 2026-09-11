@@ -4,6 +4,10 @@ set -euo pipefail
 mode=${1:-}
 case "$mode" in
   --demo)
+    if [[ ! -f .env ]]; then
+      cp .env.example .env
+      echo "Created .env from .env.example."
+    fi
     ./scripts/create-development-secrets.sh
     compose_files=(-f docker-compose.yml -f compose.demo.yml)
     build_flag=(--build)
