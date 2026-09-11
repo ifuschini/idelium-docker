@@ -19,6 +19,9 @@ case "$mode" in
     ;;
   --laravel-demo)
     ./scripts/create-development-secrets.sh
+    export GO_API_DB_PASSWORD="$(<"${DB_PASSWORD_FILE:-./secrets/db_password}")"
+    export DB_ROOT_PASSWORD="$(<"${DB_ROOT_PASSWORD_FILE:-./secrets/db_root_password}")"
+    docker compose -f compose.go-demo.yml down --remove-orphans
     compose_files=(-f docker-compose.yml -f compose.demo.yml)
     build_flag=(--build)
     ;;
