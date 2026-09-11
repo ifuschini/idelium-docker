@@ -9,6 +9,16 @@ case "$mode" in
       echo "Created .env from .env.example."
     fi
     ./scripts/create-development-secrets.sh
+    # The Go demo owns the public HTTPS port. Stop the legacy Laravel stack
+    # first, but preserve its database and TLS volumes for rollback.
+    docker compose -f docker-compose.yml -f compose.demo.yml down --remove-orphans
+    export GO_API_DB_PASSWORD="$(<"${DB_PASSWORD_FILE:-./secrets/db_password}")"
+    export DB_ROOT_PASSWORD="$(<"${DB_ROOT_PASSWORD_FILE:-./secrets/db_root_password}")"
+    compose_files=(-f compose.go-demo.yml)
+    build_flag=(--build)
+    ;;
+  --laravel-demo)
+    ./scripts/create-development-secrets.sh
     compose_files=(-f docker-compose.yml -f compose.demo.yml)
     build_flag=(--build)
     ;;
@@ -21,7 +31,7 @@ case "$mode" in
     build_flag=(--no-build)
     ;;
   *)
-    echo "Usage: $0 --demo | --production | --release" >&2
+    echo "Usage: $0 --demo | --laravel-demo | --production | --release" >&2
     exit 2
     ;;
 esac

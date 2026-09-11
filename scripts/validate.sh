@@ -14,6 +14,9 @@ WEB_IMAGE=idelium/web@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 GO_API_DB_PASSWORD=compose-validation-db-password \
 DB_ROOT_PASSWORD=compose-validation-root-password \
   docker compose -f compose.go-cutover.yml config --quiet
+GO_API_DB_PASSWORD=compose-validation-db-password \
+DB_ROOT_PASSWORD=compose-validation-root-password \
+  docker compose -f compose.go-demo.yml config --quiet
 
 if awk '/^FROM / && $2 !~ /@sha256:/ { print FILENAME ":" FNR ": unpinned base image"; failed=1 } END { exit failed }' \
   idelium-fe/Dockerfile ideliumapi/Dockerfile ideliumdb/Dockerfile idelium-cli/Dockerfile; then

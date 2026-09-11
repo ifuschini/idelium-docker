@@ -37,7 +37,7 @@ umask 077
 mkdir -p secrets
 printf 'admin@idelium.org' > secrets/admin_email
 printf 'admin' > secrets/admin_password
-echo "Configured demo administrator credentials in the local secrets directory."
+echo "Configured local demo credentials in the ignored secrets directory."
 
 ./start-idelium.sh --demo
 
@@ -53,13 +53,8 @@ echo
 echo "Idelium demo is ready."
 echo "Open: $url"
 echo
-echo "Demo administrator:"
-echo "  user: admin@idelium.org"
-echo "  password: admin"
-echo
-echo "Additional demo identity files:"
-echo "  secrets/demo_email"
-echo "  secrets/demo_password"
+echo "The Go-only demo uses synthetic smoke fixtures. Inspect the ignored"
+echo "secrets directory only when local credentials are needed."
 echo
 echo "Stop the demo with:"
-echo "  docker compose -f docker-compose.yml -f compose.demo.yml down"
+echo "  docker compose -f compose.go-demo.yml down"

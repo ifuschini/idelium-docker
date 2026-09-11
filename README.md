@@ -136,17 +136,19 @@ production.
 Stop containers while preserving database and certificate volumes:
 
 ```bash
-docker compose -f docker-compose.yml -f compose.demo.yml down
+docker compose -f compose.go-demo.yml down
 ```
 
 To destroy the demo database and generated certificate volume as well:
 
 ```bash
-docker compose -f docker-compose.yml -f compose.demo.yml down --volumes
+docker compose -f compose.go-demo.yml down --volumes
 ```
 
 Removing volumes is destructive. The ignored secret files remain on disk until
-you intentionally remove or rotate them.
+you intentionally remove or rotate them. Use `./start-idelium.sh --laravel-demo`
+only when the Laravel demo is explicitly needed for rollback or compatibility
+checks.
 
 ## Startup modes
 
@@ -155,7 +157,8 @@ implicitly:
 
 | Command | Source | TLS | Seeds | Build behavior |
 | --- | --- | --- | --- | --- |
-| `./start-idelium.sh --demo` | adjacent repos | generated self-signed certificate | base + demo | local build |
+| `./start-idelium.sh --demo` | adjacent Go API + Web repos | generated self-signed certificate | synthetic Go smoke schema | local build |
+| `./start-idelium.sh --laravel-demo` | adjacent Laravel + Web repos | generated self-signed certificate | base + demo | local build |
 | `./start-idelium.sh --production` | adjacent repos | mounted trusted certificate | disabled | local build |
 | `./start-idelium.sh --release` | published images | mounted trusted certificate | disabled | pull, never build |
 
