@@ -1,4 +1,4 @@
-FROM node:22.17.0-bookworm-slim@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0 AS web-build
+FROM node:26.8.2-bookworm-slim@sha256:cd9f682fa2885cd1056e830424764158570061c59736a1da836bc3d73df095ae AS web-build
 
 WORKDIR /build
 COPY --from=web_source package.json package-lock.json ./
