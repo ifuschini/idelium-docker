@@ -1,6 +1,6 @@
 FROM composer:2.10.2@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760 AS composer-bin
 
-FROM php:8.4.13-apache-bookworm@sha256:9a2ce5c55ce38f31062e5027ef9cf0aa008c9f7571bd3362aeec5071ef28c06e
+FROM php:8.5.11-apache-bookworm@sha256:8d79fdbba3e40de52608bedd1602864a1a4c47725203aba992fe5347a7d986e9
 
 ARG API_SOURCE_REVISION=unknown
 ARG STACK_SOURCE_REVISION=unknown
